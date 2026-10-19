@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر دكان | DOKAN</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #09090b; color: #f4f4f5; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald-500 selection:text-zinc-950">
+
+    <!-- Top Bar -->
+    <div class="bg-zinc-900 border-b border-zinc-800 py-2 px-4 text-xs text-zinc-400 hidden sm:block">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <span>مرحباً بك في متجر دكان الرسمي - توصيل لجميع محافظات مصر</span>
+            <div class="flex gap-4">
+                <span>الدعم الفني: 01271368664</span>
+                <span class="text-emerald-400 font-bold">🌐 متصل بالسحابة أونلاين</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-zinc-900/90 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center gap-4">
+            <!-- Logo (Double click secretly opens Admin for Youssef) -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer select-none" ondblclick="secretAdminLogin()" title="متجر دكان">
+                <div class="bg-emerald-500 text-zinc-950 font-black text-xl px-3 py-1.5 rounded-xl shadow-lg shadow-emerald-500/20">دكان</div>
+                <span class="text-2xl font-black tracking-widest text-white">DOKAN</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-grow max-w-xl hidden md:block">
+                <input type="text" id="search-input" oninput="handleSearch()" placeholder="بحث عن منتج..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-emerald-500 text-zinc-200">
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <button onclick="switchTab('shop')" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm font-bold transition">الرئيسية</button>
+                <button onclick="openCart()" class="relative p-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-xl transition">
+                    🛒 <span id="cart-count" class="absolute -top-1 -right-1 bg-emerald-500 text-zinc-950 text-xs w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+
+        <!-- SHOP TAB -->
+        <div id="shop-tab" class="space-y-8">
+            <div class="bg-gradient-to-r from-emerald-950 via-zinc-900 to-zinc-950 border border-zinc-800 p-8 lg:p-12 rounded-3xl text-center space-y-3">
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1.5 rounded-full">متجر سحابي حقيقي 100%</span>
+                <h1 class="text-3xl lg:text-5xl font-black text-white">منتجات دكان الحصرية</h1>
+                <p class="text-zinc-400 text-sm max-w-xl mx-auto">تسوّق الآن بكل سهولة، ادفع عبر إنستاباي أو أورنج كاش واستلم طلبك في أسرع وقت.</p>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-black mb-6 border-r-4 border-emerald-500 pr-3 text-white">المنتجات المعروضة</h2>
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div class="col-span-full text-center py-12 text-zinc-500">جاري تحميل المنتجات من السحابة...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN TAB (Hidden for Youssef) -->
+        <div id="admin-tab" class="hidden space-y-8">
+            <div class="bg-zinc-900 border border-zinc-800 p-6 lg:p-8 rounded-3xl shadow-2xl">
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-zinc-800">
+                    <div>
+                        <h2 class="text-2xl font-black text-emerald-400">لوحة تحكم يوسف (الأدمن السحابي)</h2>
+                        <p class="text-zinc-400 text-sm">أضف واحذف المنتجات أونلاين لتظهر فوراً لجميع الزوار.</p>
+                    </div>
+                    <button onclick="logoutAdmin()" class="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-500/20 transition">تسجيل خروج</button>
+                </div>
+
+                <!-- Add Product Form -->
+                <div class="bg-zinc-950 p-6 rounded-2xl border border-zinc-800 space-y-4 mb-8">
+                    <h3 class="text-lg font-bold text-zinc-200">إضافة منتج للسحابة</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <input type="text" id="p-name" placeholder="اسم المنتج" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500">
+                        <input type="number" id="p-price" placeholder="السعر (ج.م)" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="p-category" placeholder="القسم" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="p-img" placeholder="رابط صورة المنتج (URL)" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-zinc-100 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <button onclick="addProductCloud()" class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-black px-6 py-2.5 rounded-xl text-sm transition">نشر فوراً في السحابة 🚀</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex justify-end">
+        <div class="bg-zinc-950 border-l border-zinc-800 w-full max-w-md p-6 flex flex-col h-full justify-between shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
+                    <h3 class="text-xl font-bold text-white">سلة المشتريات</h3>
+                    <button onclick="closeCart()" class="text-zinc-400 hover:text-white text-xl font-bold">✕</button>
+                </div>
+                <div id="cart-items" class="space-y-3 overflow-y-auto max-h-[50vh]"></div>
+            </div>
+            <div class="border-t border-zinc-800 pt-4 space-y-4">
+                <div class="flex justify-between text-lg font-bold">
+                    <span class="text-zinc-300">الإجمالي:</span>
+                    <span id="cart-total" class="text-emerald-400">0 ج.م</span>
+                </div>
+                <button onclick="openCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-black py-3 rounded-xl transition">إتمام الشراء والدفع</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 max-w-lg w-full p-6 rounded-3xl space-y-6 shadow-2xl">
+            <h3 class="text-xl font-black text-emerald-400">بيانات الشحن وتأكيد الطلب</h3>
+            <div class="space-y-3">
+                <input type="text" id="c-name" placeholder="الاسم الكامل" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200">
+                <input type="text" id="c-phone" placeholder="رقم الهاتف" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200">
+                <select id="c-gov" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200">
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الجيزة">الجيزة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                    <option value="أسيوط">أسيوط</option>
+                </select>
+                <textarea id="c-address" placeholder="العنوان التفصيلي" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 h-20"></textarea>
+            </div>
+            <button onclick="submitOrderWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-black py-3 rounded-xl transition">تأكيد الطلب وإرسال للواتساب 📲</button>
+        </div>
+    </div>
+
+    <script>
+        const JSONBIN_KEY = "$2a$10$MxSbCVB6jNoIWojjpOx2OeD.mhFxqtv2qfbaxY7zd6ByWvFTzPyWG";
+        const BIN_ID = "6ad54ba9ffd5d1605376e484";
+
+        let products = [];
+        let cart = [];
+        let isAdminLoggedIn = sessionStorage.getItem('dokan_admin_auth') === 'true';
+
+        loadProductsFromCloud();
+
+        function loadProductsFromCloud() {
+            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                headers: { "X-Master-Key": JSONBIN_KEY }
+            })
+            .then(res => res.json())
+            .then(data => {
+                products = data.record.products || [];
+                renderProducts();
+            })
+            .catch(err => {
+                console.log("خطأ في الاتصال بالسحابة:", err);
+                document.getElementById('products-grid').innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500">حدث خطأ أثناء تحميل السحابة. تحقق من الاتصال.</div>`;
+            });
+        }
+
+        function saveProductsToCloud() {
+            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Master-Key": JSONBIN_KEY
+                },
+                body: JSON.stringify({ products: products })
+            })
+            .then(() => alert("تم الحفظ في السحابة بنجاح!"))
+            .catch(err => alert("خطأ في الحفظ: " + err));
+        }
+
+        function secretAdminLogin() {
+            if(isAdminLoggedIn) { switchTab('admin'); return; }
+            const pin = prompt("أدخل رمز الأدمن السري (خاص بيوسف):");
+            if(pin === "7474") {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('dokan_admin_auth', 'true');
+                switchTab('admin');
+            } else { alert("رمز غير صحيح."); }
+        }
+
+        function switchTab(tab) {
+            if(tab === 'shop') {
+                document.getElementById('shop-tab').classList.remove('hidden');
+                document.getElementById('admin-tab').classList.add('hidden');
+            } else {
+                document.getElementById('shop-tab').classList.add('hidden');
+                document.getElementById('admin-tab').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('dokan_admin_auth');
+            switchTab('shop');
+        }
+
+        function addProductCloud() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const category = document.getElementById('p-category').value || 'عام';
+            const image = document.getElementById('p-img').value || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
+
+            if(!name || !price) return alert("يرجى إدخال اسم المنتج والسعر.");
+
+            products.push({ id: Date.now(), name, price, category, image });
+            
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-category').value = '';
+            document.getElementById('p-img').value = '';
+            
+            renderProducts();
+            saveProductsToCloud();
+            switchTab('shop');
+        }
+
+        function deleteProductCloud(id) {
+            if(!isAdminLoggedIn) return;
+            if(confirm("حذف هذا المنتج من السحابة؟")) {
+                products = products.filter(p => p.id !== id);
+                renderProducts();
+                saveProductsToCloud();
+            }
+        }
+
+        function renderProducts(query = '') {
+            const grid = document.getElementById('products-grid');
+            let filtered = products;
+            if(query) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+            }
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-zinc-500">لا توجد منتجات حالياً. انقر مرتين على شعار "دكان" بالأعلى للدخول كأدمن وإضافة أول منتج!</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between">
+                    <img src="${p.image}" class="w-full h-52 object-cover bg-zinc-950">
+                    <div class="p-4 space-y-3 flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="font-bold text-white">${p.name}</h3>
+                            <p class="text-emerald-400 font-black text-lg mt-1">${p.price} ج.م</p>
+                        </div>
+                        <div class="space-y-2">
+                            <button onclick="addToCart(${p.id})" class="w-full bg-zinc-800 hover:bg-emerald-500 hover:text-zinc-950 font-bold py-2.5 rounded-xl text-sm transition">إضافة للسلة</button>
+                            ${isAdminLoggedIn ? `<button onclick="deleteProductCloud(${p.id})" class="w-full bg-red-500/10 text-red-400 hover:bg-red-500/20 py-1.5 rounded-xl text-xs font-bold transition">حذف من السحابة</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value;
+            renderProducts(query);
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        function openCart() {
+            const container = document.getElementById('cart-items');
+            if(cart.length === 0) {
+                container.innerHTML = `<p class="text-zinc-500 text-center py-12">السلة فارغة</p>`;
+                document.getElementById('cart-total').innerText = '0 ج.م';
+            } else {
+                let total = 0;
+                container.innerHTML = cart.map((item, index) => {
+                    total += parseFloat(item.price);
+                    return `
+                        <div class="flex justify-between items-center bg-zinc-900 p-3 rounded-xl border border-zinc-800">
+                            <div>
+                                <h4 class="font-bold text-sm text-white">${item.name}</h4>
+                                <p class="text-emerald-400 text-xs font-bold">${item.price} ج.م</p>
+                            </div>
+                            <button onclick="cart.splice(${index},1);openCart();document.getElementById('cart-count').innerText=cart.length;" class="text-red-400 text-xs">حذف</button>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('cart-total').innerText = total + ' ج.م';
+            }
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
+        function openCheckout() { if(cart.length === 0) return alert("السلة فارغة"); closeCart(); document.getElementById('checkout-modal').classList.remove('hidden'); }
+        function closeCheckout() { document.getElementById('checkout-modal').classList.add('hidden'); }
+
+        function submitOrderWhatsApp() {
+            const name = document.getElementById('c-name').value;
+            const phone = document.getElementById('c-phone').value;
+            const gov = document.getElementById('c-gov').value;
+            const address = document.getElementById('c-address').value;
+
+            if(!name || !phone) return alert("يرجى إدخال الاسم ورقم الهاتف.");
+
+            let total = 0;
+            let itemsText = cart.map(item => {
+                total += parseFloat(item.price);
+                return `- ${item.name} (${item.price} ج.م)`;
+            }).join('%0A');
+
+            let message = `🛒 *طلب جديد من متجر دكان*%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A📍 المحافظة: ${gov}%0A🏠 العنوان: ${address}%0A%0A📦 المنتجات:%0A${itemsText}%0A%0A💰 الإجمالي: ${total} ج.م`;
+            window.open(`https://wa.me/201271368664?text=${message}`, '_blank');
+
+            cart = [];
+            document.getElementById('cart-count').innerText = 0;
+            closeCheckout();
+            alert("تم إرسال الطلب بنجاح للواتساب!");
+        }
+    </script>
+</body>
+</html>
